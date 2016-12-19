@@ -6,7 +6,7 @@
 
 Name:           python-%{pypi_name}
 Version:        2.1.0.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Angular-Gettext (XStatic packaging standard)
 
 License:        MIT
@@ -126,6 +126,9 @@ rm -rf %{buildroot}%{python3_sitelib}/xstatic/pkg/angular_gettext/data
 %{_jsdir}/angular_gettext
 
 %changelog
+* Mon Dec 19 2016 Miro Hrončok <mhroncok@redhat.com> - 2.1.0.2-5
+- Rebuild for Python 3.6
+
 * Fri Oct 07 2016 Jan Beran <jberan@redhat.com> - 2.1.0.2-4
 - Provides a Python 3 subpackage
 
