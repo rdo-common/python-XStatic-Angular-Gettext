@@ -1,12 +1,13 @@
-%if 0%{?fedora}
+%if 0%{?fedora}|| 0%{?rhel} > 7
 %global with_python3 1
+%global with_python2 0
 %endif
 
 %global pypi_name XStatic-Angular-Gettext
 
 Name:           python-%{pypi_name}
-Version:        2.1.0.2
-Release:        5%{?dist}
+Version:        2.3.8.0
+Release:        1%{?dist}
 Summary:        Angular-Gettext (XStatic packaging standard)
 
 License:        MIT
@@ -22,6 +23,7 @@ This package is intended to be used by any project that needs these files.
 It intentionally does not provide any extra code except some metadata
 nor has any extra requirements.
 
+%if 0%{?with_python2}
 %package -n python2-%{pypi_name}
 Summary:        %{summary}
 
@@ -42,6 +44,7 @@ It intentionally does not provide any extra code except some metadata
 nor has any extra requirements.
 
 This package provides Python 2 build of %{pypi_name}.
+%endif
 
 %if 0%{?with_python3}
 %package -n python3-%{pypi_name}
@@ -88,30 +91,39 @@ This package contains the javascript files.
 sed -i "s|^BASE_DIR = .*|BASE_DIR = '%{_jsdir}/angular_gettext'|" xstatic/pkg/angular_gettext/__init__.py
 
 %build
+%if 0%{?with_python2}
 %py2_build
+%endif
 %if 0%{?with_python3}
 %py3_build
 %endif
 
 %install
+%if 0%{?with_python2}
 %py2_install
 mkdir -p %{buildroot}%{_jsdir}/angular_gettext
 mv %{buildroot}%{python2_sitelib}/xstatic/pkg/angular_gettext/data/angular-gettext.js %{buildroot}%{_jsdir}/angular_gettext
 rmdir %{buildroot}%{python2_sitelib}/xstatic/pkg/angular_gettext/data/
 # fix execute flags for js
 chmod 644 %{buildroot}%{_jsdir}/angular_gettext/angular-gettext.js
+%endif
 
 %if 0%{?with_python3}
 %py3_install
-# Remove static files, already created by the python2 subpkg
-rm -rf %{buildroot}%{python3_sitelib}/xstatic/pkg/angular_gettext/data
+mkdir -p %{buildroot}%{_jsdir}/angular_gettext
+mv %{buildroot}%{python3_sitelib}/xstatic/pkg/angular_gettext/data/angular-gettext.js %{buildroot}%{_jsdir}/angular_gettext
+rmdir %{buildroot}%{python3_sitelib}/xstatic/pkg/angular_gettext/data/
+# fix execute flags for js
+chmod 644 %{buildroot}%{_jsdir}/angular_gettext/angular-gettext.js
 %endif
 
+%if 0%{?with_python2}
 %files -n python2-%{pypi_name}
 %doc README.txt
 %{python2_sitelib}/xstatic/pkg/angular_gettext
 %{python2_sitelib}/XStatic_Angular_Gettext-%{version}-py%{python2_version}.egg-info
 %{python2_sitelib}/XStatic_Angular_Gettext-%{version}-py%{python2_version}-nspkg.pth
+%endif
 
 %if 0%{?with_python3}
 %files -n python3-%{pypi_name}
@@ -126,7 +138,10 @@ rm -rf %{buildroot}%{python3_sitelib}/xstatic/pkg/angular_gettext/data
 %{_jsdir}/angular_gettext
 
 %changelog
-* Mon Dec 19 2016 Miro Hrončok <mhroncok@redhat.com> - 2.1.0.2-5
+* Mon Feb  6 2017 HaÃ¯kel GuÃ©mar <hguemar@fedoraproject.org> - 2.3.8.0-1
+- Upstream 2.3.8.0
+
+* Mon Dec 19 2016 Miro HronÄok <mhroncok@redhat.com> - 2.1.0.2-5
 - Rebuild for Python 3.6
 
 * Fri Oct 07 2016 Jan Beran <jberan@redhat.com> - 2.1.0.2-4
